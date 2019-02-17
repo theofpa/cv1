@@ -29,8 +29,21 @@ normal = zeros(h, w, 3);
 %   albedo at this point is |g|
 %   normal at this point is g / |g|
 
-
-
+% for each point in the image array
+for xdim=1:h
+    for ydim=1:w
+        % stack image values into a vector i
+        i=reshape(image_stack(xdim,ydim,:),5,1);
+        % construct the diagonal matrix scriptI
+        scriptI=diag(i);
+        % solve scriptI * scriptV * g = scriptI * i to obtain g for this point
+        [g,R]=linsolve(scriptI*scriptV,scriptI*i);
+        % albedo at this point is |g|
+        albedo(xdim,ydim)=norm(g);
+        % normal at this point is g / |g|
+        normal(xdim,ydim,:)=g/norm(g);
+    end
+end
 % =========================================================================
 
 end
