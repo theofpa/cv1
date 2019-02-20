@@ -1,11 +1,6 @@
 function [new_image] = rgb2opponent(input_image)
 % converts an RGB image into opponent color space
-im = input_image;
-
-R = im(:,:,1);
-G = im(:,:,2);
-B = im(:,:,3);
-
+[R, G, B] = getColorChannels(input_image);
 
 O1 = (R-G)./sqrt(2);
 O2 = (R+G - 2.*B)./sqrt(6);
