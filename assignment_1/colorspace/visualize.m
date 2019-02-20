@@ -1,4 +1,4 @@
-function visualize(input_image)
-
+function visualize(new_image)
+figure;
+imshow(new_image)
 end
-
