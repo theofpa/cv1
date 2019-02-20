@@ -18,17 +18,9 @@ luminosity = 0.21.*R + 0.72.*G + 0.07.*B;
 % built-in MATLAB function 
 matlab_grayscale = rgb2gray(input_image);
 
-ax1 = subplot(2,2,1);
-imshow(lightness)
 
-ax2 = subplot(2,2,2);
-imshow(average)
-
-ax3 = subplot(2,2,3);
-imshow(luminosity)
-
-ax4 = subplot(2,2,4);
-imshow(matlab_grayscale)
-
-new_image = input_image;
+new_image(:,:,1) = average;
+new_image(:,:,2) = luminosity;
+new_image(:,:,3) = matlab_grayscale;
+new_image(:,:,4) = lightness;
 end
