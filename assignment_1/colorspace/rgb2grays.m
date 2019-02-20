@@ -2,9 +2,7 @@
 function [new_image] = rgb2grays(input_image)
 % converts an RGB into grayscale by using 4 different methods
 im = input_image;
-R = im(:,:,1);
-G = im(:,:,2);
-B = im(:,:,3);
+[R, G, B] = getColorChannels(input_image);
 
 % ligtness method
 lightness = (max(im,[],3) + min(im,[],3))./2;
