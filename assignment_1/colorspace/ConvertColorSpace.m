@@ -34,10 +34,7 @@ else
     return;
 end
 
-if not(strcmp(colorspace, 'gray'))
-    visualize(new_image); % fill in this function
-end
-
+visualize(new_image); % fill in this function
 
 end
 
