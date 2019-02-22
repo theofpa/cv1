@@ -59,9 +59,9 @@ sinCarrier = createSin(rot_x, lambda, psi);
 % Modulate (multiply) Gaussian envelope with the carriers to compute 
 % the real and imaginary components of the omplex Gabor filter. 
 % \\TODO: modulate gaussianEnv with cosCarrier
-myGabor_real = gaussianEnv * cosCarrier; % Done
+myGabor_real = gaussianEnv .* cosCarrier; % Done
 % \\TODO: modulate gaussianEnv with sinCarrier
-myGabor_imaginary = gaussianEnv * sinCarrier; % Done
+myGabor_imaginary = gaussianEnv .* sinCarrier; % Done
 
 % Pack myGabor_real and myGabor_imaginary into myGabor.
 myGabor(:,:,1) = myGabor_real;
