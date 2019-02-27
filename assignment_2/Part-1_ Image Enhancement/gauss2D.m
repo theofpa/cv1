@@ -6,6 +6,10 @@ function G = gauss2D( sigma , kernel_size )
     end
     G_x = gauss1D(sigma, kernel_size);
     G_y = gauss1D(sigma, kernel_size);
-    G = G_x .* G_y;
+    for xdim=1:kernel_size
+        for ydim=1:kernel_size
+            G(xdim, ydim) = G_x(xdim) * G_y(ydim);
+        end
+    end
     G = G ./ sum(G);
 end
