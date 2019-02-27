@@ -11,5 +11,5 @@ function G = gauss2D( sigma , kernel_size )
             G(xdim, ydim) = G_x(xdim) * G_y(ydim);
         end
     end
-    G = G ./ sum(G);
+    G = G ./ sum(G, 'all');
 end
