@@ -1,4 +1,4 @@
-function [H, r, c] = haris_corner_detector(I, threshold)
+function [H] = harris_corner_detector(I, threshold, rot_angle)
 % Detects corners in an image using the cornerness formula, the two
 % eighenvalues lambda1 and lambda2
 
@@ -15,13 +15,12 @@ function [H, r, c] = haris_corner_detector(I, threshold)
 %  computed image derivatives I_x and I_y
 %  the original images with the corner points plotted on it
 
-
+I = imrotate(imread(I), rot_angle);
 
 % compute the elements of Q. To do that, you need to
 % calculate I_x , which is the smoothed derivative of the image
 % That can be obtained by convolving the first order Gaussian derivative
 % with the image I along the x-direction
-
 [gaussian_x, gaussian_y] = gradient(fspecial('gaussian', [5 5], 4));
 I_x = conv2(rgb2gray(I), gaussian_x);
 I_y = conv2(rgb2gray(I), gaussian_y);
@@ -33,11 +32,17 @@ B = conv2(I_x .* I_y, fspecial('gaussian', [5 5], 4));
 C = conv2(I_y .* I_y, fspecial('gaussian', [5 5], 4));
 
 % Use formula 12 to compute the cornerness
-H = (A .* C - B .^2) - threshold * (A + C) .^2;
+H = (A .* C - (B .^2)) -threshold * (A + C).^2;
 
 
-%TODO Plot original image I and corners
+% Plot original image I_x, I_y, I and corners
+[r, c] = find(abs(H) > threshold); %rows and columns of corners
+figure
+subplot(131), (imshow(I_x));
+subplot(132), imshow(I_y);
+subplot(133), imshow(I);
+hold on;
+plot(c, r, 'r.');
 
-%TODO Plot I_x and I_y
 
 end
