@@ -1,6 +1,7 @@
-function [max_cols, max_rows] = lucas_kanade(orig_img1, img1, img2, scale)
-% Input: original imread image, two double grey images and the scale
-% since some images get a tiny vectors
+function [v_all] = lucas_kanade(orig_img1, img1, img2, scale, bool_plot)
+% Input: original imread image, two double grey images, the scale
+% since some images get a tiny vectors and bool_plot to specify whether
+% it should end with a plot
 % Output: max columns, max rows and the figure with the vectors
 
 % Get image sizes
@@ -25,8 +26,10 @@ b_all = calculate_b(regions1, regions2);
 % Calculate all v
 v_all = calculate_v(A_all, b_all);
 
-% Draw image with the quivers
-draw_img(orig_img1, v_all, scale, ppr);
+if bool_plot == 1
+    % Draw image with the quivers
+    draw_img(orig_img1, v_all, scale, ppr);
+end
 end
 
 function [divided_img] = divide_img(img, cols, rows)

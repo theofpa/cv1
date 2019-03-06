@@ -1,4 +1,4 @@
-function [H, r, c] = harris_corner_detector(I, threshold, rot_angle)
+function [H, r, c] = harris_corner_detector(I, threshold, rot_angle, bool_plot)
 % Detects corners in an image using the cornerness formula, the two
 % eighenvalues lambda1 and lambda2
 
@@ -33,16 +33,16 @@ C = conv2(I_y .* I_y, fspecial('gaussian', [5 5], 4));
 
 % Use formula 12 to compute the cornerness
 H = (A .* C - (B .^2)) -threshold * (A + C).^2;
-
-
-% Plot original image I_x, I_y, I and corners
 [r, c] = find(H > threshold); %rows and columns of corners
-figure
-subplot(131), (imshow(I_x));
-subplot(132), imshow(I_y);
-subplot(133), imshow(I);
-hold on;
-plot(c, r, 'r+','MarkerSize',8);
 
+if bool_plot == 1
+    % Plot original image I_x, I_y, I and corners
+    figure
+    subplot(131), (imshow(I_x));
+    subplot(132), imshow(I_y);
+    subplot(133), imshow(I);
+    hold on;
+    plot(c, r, 'r+','MarkerSize',8);
+end
 
 end
