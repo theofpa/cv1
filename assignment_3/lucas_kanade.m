@@ -26,7 +26,7 @@ b_all = calculate_b(regions1, regions2);
 v_all = calculate_v(A_all, b_all);
 
 % Draw image with the quivers
-draw_img(orig_img1, v_all, scale);
+draw_img(orig_img1, v_all, scale, ppr);
 end
 
 function [divided_img] = divide_img(img, cols, rows)
@@ -82,7 +82,7 @@ function [v_all] = calculate_v(A, b)
     end
 end
 
-function draw_img(i1, v_all, scale)
+function draw_img(i1, v_all, scale, ppr)
 % Draw image and add the vectors of v for every region starting
 % from the minimal x and y value in the region
     figure;
@@ -93,15 +93,18 @@ function draw_img(i1, v_all, scale)
     v_all = reshape(v_all, [v_size, v_size]);
     for row = 1:v_size
         for col = 1:v_size
-            % Quiver start at minimal x and y value of the window
-            x = col*15-15;
-            y = row*15-15;
+            % Quiver start at roughly middle of region
+            x = col*15-floor(ppr/2);
+            y = row*15-floor(ppr/2);
             
             v = v_all{row, col};
             v_x = v(1);
             v_y = v(2);
             q = quiver(x, y, v_x, v_y);
             q.AutoScaleFactor = scale; % Quivers were too small
+            q.Color = 'red';
+            q.ShowArrowHead = 'on'; 
+            q.MaxHeadSize = 1.5;
         end
     end
 end
