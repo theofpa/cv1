@@ -1,94 +1,107 @@
-function [max_cols, max_rows] = lucas_kanade(image1, image2)
-%LUCAS_KANADE Summary of this function goes here
-%   Detailed explanation goes here
-i1 = imread(image1);
-i2 = imread(image2);
+function [max_cols, max_rows] = lucas_kanade(orig_img1, img1, img2, scale)
+% Input: original imread image, two double grey images and the scale
+% since some images get a tiny vectors
+% Output: max columns, max rows and the figure with the vectors
 
-img1 = im2double(rgb2gray(i1));
-img2 = im2double(rgb2gray(i2));
-
+% Get image sizes
 size_x = size(img1,1);
 size_y = size(img1,2);
 
+% Window, column en row sizes
 ppr = 15;
 max_cols = floor(size_x/ppr);
 max_rows = floor(size_y/ppr);
 
+% Divide image into regions
 regions1 = divide_img(img1, max_cols, max_rows);
 regions2 = divide_img(img2, max_cols, max_rows);
 
+% Calculate all A
+A_all = calculate_A(regions1);
 
-A = calculate_A(regions1);
-A{1};
+% Calculate all b
+b_all = calculate_b(regions1, regions2);
 
-A_t = calculate_A_t(A);
-A_t{1};
+% Calculate all v
+v_all = calculate_v(A_all, b_all);
 
-b = calculate_b(regions1, regions2);
-b{60};
-
-v = calculate_v(A, A_t, b);
-v{60};
-
-draw_img(i1, v);
-end
-
-function draw_img(i1, v)
-figure;
-imshow(i1);
-hold on;
-
-for x = 1:length(v)
-    v1 = v{x}(1:15, :);
-    v2 = v{x}(16:30, :);
-    
-end
+% Draw image with the quivers
+draw_img(orig_img1, v_all, scale);
 end
 
 function [divided_img] = divide_img(img, cols, rows)
-divided_img = {1,cols*rows};
-i=1;
-for row = 1:rows
-    for col = 1:cols
-        r2 = row*15;
-        r1 = r2 - 14;
-        c2 = col*15;
-        c1 = c2 - 14;
-        divided_img{i} = img(c1:c2, r1:r2);
-
-        i=i+1;
+% Divide image into different regions given the row and column count
+% The output is a (1, row*column) sized cell with each containing
+% a 15x15 matrix
+    divided_img = {1,cols*rows};
+    i=1;
+    for row = 1:rows
+        for col = 1:cols
+            r2 = row*15;
+            r1 = r2 - 14;
+            c2 = col*15;
+            c1 = c2 - 14;
+            divided_img{i} = img(c1:c2, r1:r2);
+            i=i+1;
+        end
     end
 end
 
+function [A_all] = calculate_A(regions)
+% Calculate for the different regions all A matrices; the x and y partial
+% derivatives
+    A_all = {};
+    for x = 1:length(regions)
+        [I_x, I_y] = gradient(regions{x});
+        [col, row] = size(I_x);
+        I_x = reshape(I_x, [col*row, 1]);
+        I_y = reshape(I_y, [col*row, 1]); % Should be same size
+        A_all{x} = [I_x(:), I_y(:)];
+    end
 end
 
-function [A] = calculate_A(regions)
-A = {};
-for x = 1:length(regions)
-    [I_x, I_y] = gradient(regions{x});
-    A{x} = [I_x,I_y];
-end
-end
-
-function [A_t] = calculate_A_t(A)
-A_t = {};
-for x = 1:length(A)
-    A_t{x} = A{x}';
-end
+function [b_all] = calculate_b(region1, region2)
+% Calculate for the different regions all b vectors; the t partial
+% derivatives
+    b_all = {};
+    for x = 1:length(region1)
+        I_t = region2{x}-region1{x};
+        [col, row] = size(I_t);
+        I_t = reshape(I_t, [col*row, 1]);
+        b_all{x} = -I_t;
+    end
 end
 
-function [b] = calculate_b(region1, region2)
-b = {};
-for x = 1:length(region1)
-    b{x} = region1{x}-region2{x};
-end
+function [v_all] = calculate_v(A, b)
+% Calculate for the different regions all v vectors; v_x and v_y
+    v_all = {};
+    for x = 1:length(A)
+        r = A{x}.'*A{x};
+        y = A{x}.'*b{x}; 
+        v_all{x} = r\y; 
+    end
 end
 
-function [v] = calculate_v(A, A_t, b)
-v = {};
-for x = 1:length(A)
-    r = A_t{x}*A{x};
-    y = A_t{x}*b{x}; 
-    v{x} = r\y; 
-end
+function draw_img(i1, v_all, scale)
+% Draw image and add the vectors of v for every region starting
+% from the minimal x and y value in the region
+    figure;
+    imshow(i1);
+    hold on;
+    
+    v_size = sqrt(length(v_all));
+    v_all = reshape(v_all, [v_size, v_size]);
+    for row = 1:v_size
+        for col = 1:v_size
+            % Quiver start at minimal x and y value of the window
+            x = col*15-15;
+            y = row*15-15;
+            
+            v = v_all{row, col};
+            v_x = v(1);
+            v_y = v(2);
+            q = quiver(x, y, v_x, v_y);
+            q.AutoScaleFactor = scale; % Quivers were too small
+        end
+    end
 end
