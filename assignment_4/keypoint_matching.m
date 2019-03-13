@@ -1,4 +1,4 @@
-function [] = keypoint_matching(im1,im2)
+function [matches] = keypoint_matching(im1,im2)
 
 
 % In order to run this download vlfeat:
@@ -24,7 +24,7 @@ threshold = 30; % Threshold for ubcmatch algorithm. higher is less keypoints.
 %Find Matches
 [f1, d1] = vl_sift(i1) ;
 [f2, d2] = vl_sift(i2) ;
-[matches, scores] = vl_ubcmatch(d1, d2, threshold) ; %Index of match and distance between scores
+[matches, scores] = vl_ubcmatch(d1, d2, threshold) ; %Index of matches and distance between scores
 
 %Show images
 figure; 
