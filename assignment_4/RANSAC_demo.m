@@ -9,4 +9,4 @@ im2 = imread('boat2.pgm');
 im1 = im2single(im1);
 im2 = im2single(im2);
 
-RANSAC(im1,im2,1,5);
+[best_N, best_inlier_count, best_x] = RANSAC(im1,im2,100,10)
