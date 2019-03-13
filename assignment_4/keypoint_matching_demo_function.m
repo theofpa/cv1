@@ -10,10 +10,8 @@ function [matches] = keypoint_matching_demo_function()
 %each image. 
 
 %Load imgs
-img1 = imread('boat1.pgm');
-img2 = imread('boat2.pgm');
-im1 = im2single(img1);
-im2 = im2single(img2);
+im1 = imread('boat1.pgm');
+im2 = imread('boat2.pgm');
 
 keypoint_matching(im1,im2)
 
