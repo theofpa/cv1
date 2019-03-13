@@ -9,6 +9,8 @@ function [matches] = keypoint_matching(im1,im2)
 %This function returns the supposed matches between region descriptors in
 %each image. 
 
+im1 = im2single(im1);
+im2 = im2single(im2);
 
 %%Implementing David Lowe's SIFT functions to extract and match
 %%descriptors%%
