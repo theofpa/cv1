@@ -1,3 +1,10 @@
+classdef finetune_cnn < handle
+    
+    properties
+    end
+    
+    methods(Static)
+
 function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
@@ -76,8 +83,21 @@ if rand > 0.5, images=fliplr(images) ; end
 end
 
 % -------------------------------------------------------------------------
-function imdb = getIMDB()
-% -------------------------------------------------------------------------
+function [imdb] = getIMDB()
+    
+load('train.mat')
+TrainX = X;
+TrainY = y;
+TrainSet = uint8(ones(length(TrainX)));
+load('test.mat')
+TestX = X;
+TestY = y;
+TestSet = uint8(2*ones(length(TestX)));
+
+x = [TrainX;TestX];
+y = [TrainY;TestY];
+type = [TrainSet;TestSet];
+% ------------------------------------------------------------------------
 % Preapre the imdb structure, returns image data with mean image subtracted
 classes = {'airplanes', 'birds', 'ships', 'horses', 'cars'};
 splits = {'train', 'test'};
@@ -85,16 +105,70 @@ splits = {'train', 'test'};
 %% TODO: Implement your loop here, to create the data structure described in the assignment
 %% Use train.mat and test.mat we provided from STL-10 to fill in necessary data members for training below
 %% You will need to, in a loop function,  1) read the image, 2) resize the image to (32,32,3), 3) read the label of that image
+index = zeros(length(y));
+for i = 1:length(y)
+if y(i,1) == 4
+index(i,1) = i;
+elseif y(i,1) == 5
+index(i,1) = i;
+elseif y(i,1) == 6
+index(i,1) = i;
+elseif y(i,1) == 8
+index(i,1) = i;
+elseif y(i,1) == 10
+index(i,1) = i;
+else
+index(i,1) = 0;
+end
+end
+
+
+for i = 1:length(y)
+   if index(i,1) == 0
+       New_X(i,:) = x(i,:);
+       New_Y(i,:) = y(i,:);
+       New_Set(i,:) = type(i,:);
+   end
+end
+
+New_X(~any(New_X,2),:) = [];
+New_Y(~any(New_Y,2),:) = [];
+New_Set(~any(New_Set,2),:) = [];
+
+%Pre allocation
+data = uint8(zeros(32,32,3,length(New_Y)));
+labels = uint8(zeros(length(New_Y),1));
+set = uint8(zeros(length(New_Y),1));
+for i = 1 : length(New_Y)
+    % Handle images
+    img = reshape(New_X(i,:),[96,96,3]);
+    img = imresize(img,[32,32]);
+    data(:,:,:,i) = img;
+    % Handle labels
+    if New_Y(i,1) == 3
+        labels(i,1) = 5;
+    elseif New_Y(i,1) == 9
+        labels(i,1) = 3;
+    elseif New_Y(i,1) == 7
+        labels(i,1) = 4;
+    else
+        labels(i,1) = New_Y(i,1);
+    end
+    % Handle sets
+    set(i,1) = New_Set(i);
+end
+
+
 
 %%
 % subtract mean
-dataMean = mean(data(:, :, :, sets == 1), 4);
+dataMean = uint8(mean(data(:, :, :, set == 1), 4));
 data = bsxfun(@minus, data, dataMean);
 
 imdb.images.data = data ;
 imdb.images.labels = single(labels) ;
-imdb.images.set = sets;
-imdb.meta.sets = {'train', 'val'} ;
+imdb.images.set = set;
+imdb.meta.sets = splits;
 imdb.meta.classes = classes;
 
 perm = randperm(numel(imdb.images.labels));
@@ -102,4 +176,6 @@ imdb.images.data = imdb.images.data(:,:,:, perm);
 imdb.images.labels = imdb.images.labels(perm);
 imdb.images.set = imdb.images.set(perm);
 
+end
+    end
 end
