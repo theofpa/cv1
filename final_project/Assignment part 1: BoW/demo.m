@@ -11,8 +11,10 @@ sift_descriptors=feature_extraction(X);
 % build visual vocabulary
 [idx, c]=kmeans(sift_descriptors, 400);
 
-% quantize features
+% encode features using visual vocabulary
+encoded=encoding;
 
 % represent images by frequencies of words
+histograms=bow_frequency;
 
 % classification
