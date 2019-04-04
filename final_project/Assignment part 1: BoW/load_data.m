@@ -20,7 +20,20 @@ X=X([idx],:);
 y=y([idx],:);
 
 % reshape images to the 96x96 representation
-X=reshape(X,2500,96,96,3);
+%X=reshape(X,2500,96,96,3);
 
 % limit the size for faster execution
-X=datasample(X,500);
+%X=datasample(X,500);
+
+% Split the data manually to 20% for vocabulary built
+Xvoc=[];
+for i=0:4
+    Xvoc=[Xvoc;X((i*500)+1:(i*500)+100,:)];
+end
+% And the rest 80% for training
+Xhist=[];
+yhist=[];
+for i=0:4
+    Xhist=[Xhist;X((i*500)+101:(i*500)+500,:)];
+    yhist=[yhist;y((i*500)+101:(i*500)+500,:)];
+end

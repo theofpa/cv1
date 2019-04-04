@@ -6,14 +6,17 @@ run('~/Downloads/vlfeat-0.9.21/toolbox/vl_setup')
 load_data
 
 % extract SIFT descriptors
-sift_descriptors=feature_extraction(X);
-
+tic
+sift_descriptors=feature_extraction(Xvoc);
+toc
 % build visual vocabulary
-[idx, c]=kmeans(sift_descriptors, 400);
-
+tic
+[c, ~]=vl_kmeans(sift_descriptors, 400);
+toc
 % encode features using visual vocabulary
-encoded=encoding;
-
+tic
+encodedX=encoding_histogram(Xhist,c);
+toc
 % represent images by frequencies of words
 histograms=bow_frequency;
 
