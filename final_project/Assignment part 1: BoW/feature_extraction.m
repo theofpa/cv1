@@ -14,5 +14,17 @@ end
 % grayscale SIFT
 
 % RGB-SIFT
+descriptors2=[];
+for i=1:length(X)
+    [~,d]=vl_phow(im2single(squeeze(X(i,:,:,:))), 'Color','rgb');
+    descriptors2=[descriptors2,double(d(:,:))'];
+end
 
 % opponent-SIFT
+descriptors3=[];
+for i=1:length(X)
+    [~,d]=vl_phow(im2single(squeeze(X(i,:,:,:))), 'Color','opponent');
+    descriptors3=[descriptors3,double(d(:,:))'];
+end
+
+end
