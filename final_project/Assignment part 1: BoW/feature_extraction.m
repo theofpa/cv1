@@ -3,8 +3,10 @@ function [descriptors] = feature_extraction(X)
 % densely sampled regions
 % help vl_dsift: input image must be of class SINGLE and grayscale.
 descriptors=[];
+stepPixels=1;
+descriptorGeometry=[4 4 8];
 for i=1:length(X)
-    [~,d]=vl_dsift(rgb2gray(im2single(squeeze(X(i,:,:,:)))));
+    [~,d]=vl_dsift(rgb2gray(im2single(squeeze(X(i,:,:,:)))), 'step', stepPixels, 'geometry', descriptorGeometry);
     descriptors=[descriptors,double(d(:,:))'];
 end
 % key points
