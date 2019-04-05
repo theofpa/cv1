@@ -17,7 +17,9 @@ toc
 tic
 encodedX=encoding_histogram(Xhist,c);
 toc
-% represent images by frequencies of words
-histograms=bow_frequency;
 
 % classification
+preprocess
+for i=labels
+    classifier{i}=fitcsvm(encodedX, ysplit{i}, 'KernelFunction', 'rbf');
+end
