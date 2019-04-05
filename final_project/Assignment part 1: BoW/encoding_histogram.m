@@ -9,7 +9,8 @@ function [histograms] = encoding_histogram(images, clusters)
             'step', stepPixels,...
             'geometry', descriptorGeometry,...
             'size', sizePixels);
-        %[~,descriptors]=vl_dsift(rgb2gray(im2single(squeeze(images(i,:,:,:)))), 'step', stepPixels, 'geometry', descriptorGeometry);
+        % [~,descriptors]=vl_phow(im2single(reshape(squeeze(images(i,:)),96,96,3)), 'Color','rgb');
+        % [~,descriptors]=vl_phow(im2single(reshape(squeeze(images(i,:)),96,96,3)), 'Color','opponent');
         [~, k] = min(transpose(vl_alldist2(transpose(double(descriptors)), clusters)));
         imhist = histcounts(k, 1:size(clusters, 2)+1);
         imhist = imhist / size(descriptors, 1);

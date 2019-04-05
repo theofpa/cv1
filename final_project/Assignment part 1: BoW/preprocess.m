@@ -1,4 +1,4 @@
-j=0
+j=0;
 for i=labels
     ysplit{i}=zeros(2000,1);
     ysplit{i}(j+1:j+400)=1;
